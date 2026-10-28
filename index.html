@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiet Owl Studio</title>
+<meta name="description" content="Quiet Owl Studio makes calm, thoughtful apps and games.">
+<style>
+  :root { --bg: #f3f1ec; --ink: #1d2433; --muted: #5d6576; --card: #fff; --accent: #2f5d8a; color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #12161f; --ink: #eef1f6; --muted: #9aa4b5; --card: #1b2130; --accent: #8db8e8; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 56px max(20px, env(safe-area-inset-left)) 72px; }
+  .owl { font-size: 44px; line-height: 1; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 2.4rem; margin: 12px 0 6px; letter-spacing: -.01em; }
+  p.lead { color: var(--muted); margin: 0 0 36px; font-size: 1.1rem; }
+  h2 { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .app { display: flex; gap: 16px; align-items: center; background: var(--card); border-radius: 18px; padding: 16px; text-decoration: none; color: inherit; }
+  .app img { width: 64px; height: 64px; border-radius: 15px; flex: none; }
+  .app b { display: block; font-size: 1.1rem; }
+  .app span { color: var(--muted); font-size: .95rem; }
+  footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <div class="owl" aria-hidden="true">🦉</div>
+  <h1>Quiet Owl Studio</h1>
+  <p class="lead">Calm, thoughtful apps. No noise, no tricks.</p>
+  <h2>Our apps</h2>
+  <a class="app" href="quotewise/">
+    <img src="quotewise/icon.png" alt="">
+    <div><b>Quotewise</b><span>Quote word puzzles for iPhone. Help and privacy</span></div>
+  </a>
+  <footer>Contact: <a href="mailto:support@quietowl.app">support@quietowl.app</a></footer>
+</main>
+</body>
+</html>
