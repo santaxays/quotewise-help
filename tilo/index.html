@@ -356,7 +356,8 @@ footer a { color: var(--muted); margin-right: 14px; }
   }
 
   // ---------- waitlist / checkout ----------
-  const paddleOn = () => !!(C.paddle && C.paddle.enabled && C.paddle.token && window.Paddle);
+  const paddleWanted = () => !!(C.paddle && C.paddle.token && (C.paddle.enabled || params.get('checkout') === 'test'));
+  const paddleOn = () => paddleWanted() && !!window.Paddle;
   function join() {
     if (paddleOn()) {
       return '<div class="box" id="join"><div class="owlrow"><img src="owl.svg" alt=""><div class="bub">Ready to grow all 8 branches with ' + esc(st.name) + '?</div></div><div class="plans">' +
@@ -374,7 +375,7 @@ footer a { color: var(--muted); margin-right: 14px; }
       $$('.pl').forEach((b) => b.addEventListener('click', () => { plan = b.dataset.p; $$('.pl').forEach((x) => x.classList.toggle('sel', x === b)); }));
       $('#buy').addEventListener('click', () => {
         const price = C.paddle.prices[plan];
-        window.Paddle.Checkout.open({ items: [{ priceId: price, quantity: 1 }], customData: { cls: st.result.cls, age: st.age, utm }, settings: { displayMode: 'overlay', theme: 'light', successUrl: location.origin + location.pathname + 'welcome.html' } });
+        window.Paddle.Checkout.open({ items: [{ priceId: price, quantity: 1 }], discountCode: plan === 'year' && C.paddle.foundingCode ? C.paddle.foundingCode : undefined, customData: { cls: st.result.cls, age: st.age, utm }, settings: { displayMode: 'overlay', theme: 'light', locale: 'en', successUrl: 'https://quietowl.app/tilo/welcome.html' } });
       });
       return;
     }
@@ -402,7 +403,7 @@ footer a { color: var(--muted); margin-right: 14px; }
     try { if (navigator.share) { await navigator.share({ title: 'Tilo', text, url }); return; } } catch (e) { return; }
     try { await navigator.clipboard.writeText(text + ' ' + url); $('#shr').textContent = 'Link copied ✓'; } catch (e) { prompt('Copy this link', url); }
   }
-  if (C.paddle && C.paddle.enabled && C.paddle.token) {
+  if (paddleWanted()) {
     const s = document.createElement('script'); s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
     s.onload = () => { if (C.paddle.env === 'sandbox') window.Paddle.Environment.set('sandbox'); window.Paddle.Initialize({ token: C.paddle.token }); };
     document.head.appendChild(s);
