@@ -295,7 +295,7 @@ footer a { color: var(--muted); margin-right: 14px; }
     $$('#qa button').forEach((b) => b.addEventListener('click', () => { st.age = +b.dataset.a; $$('#qa button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
     $$('#qv button').forEach((b) => b.addEventListener('click', () => { st.av = b.dataset.v; $$('#qv button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
     $('#qgo').addEventListener('click', () => ask(0));
-    setTimeout(() => $('#qn').focus(), 50);
+    setTimeout(() => { const n = $('#qn'); if (n) n.focus(); }, 50);
   }
   function ask(i) {
     const q = T.quiz[i];
@@ -356,7 +356,8 @@ footer a { color: var(--muted); margin-right: 14px; }
   }
 
   // ---------- waitlist / checkout ----------
-  const paddleWanted = () => !!(C.paddle && C.paddle.token && (C.paddle.enabled || params.get('checkout') === 'test'));
+  const PD = C.paddle ? (params.get('checkout') === 'test' ? Object.assign({ env: 'sandbox' }, C.paddle.sandbox) : C.paddle.enabled ? Object.assign({ env: 'production' }, C.paddle.live) : null) : null;
+  const paddleWanted = () => !!(PD && PD.token);
   const paddleOn = () => paddleWanted() && !!window.Paddle;
   function join() {
     if (paddleOn()) {
@@ -374,7 +375,7 @@ footer a { color: var(--muted); margin-right: 14px; }
       let plan = 'year';
       $$('.pl').forEach((b) => b.addEventListener('click', () => { plan = b.dataset.p; $$('.pl').forEach((x) => x.classList.toggle('sel', x === b)); }));
       $('#buy').addEventListener('click', () => {
-        const price = C.paddle.prices[plan];
+        const price = PD.prices[plan];
         window.Paddle.Checkout.open({ items: [{ priceId: price, quantity: 1 }], discountCode: plan === 'year' && C.paddle.foundingCode ? C.paddle.foundingCode : undefined, customData: { cls: st.result.cls, age: st.age, utm }, settings: { displayMode: 'overlay', theme: 'light', locale: 'en', successUrl: 'https://quietowl.app/tilo/welcome.html' } });
       });
       return;
@@ -405,7 +406,7 @@ footer a { color: var(--muted); margin-right: 14px; }
   }
   if (paddleWanted()) {
     const s = document.createElement('script'); s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-    s.onload = () => { if (C.paddle.env === 'sandbox') window.Paddle.Environment.set('sandbox'); window.Paddle.Initialize({ token: C.paddle.token }); };
+    s.onload = () => { if (PD.env === 'sandbox') window.Paddle.Environment.set('sandbox'); window.Paddle.Initialize({ token: PD.token }); };
     document.head.appendChild(s);
   }
   if (params.get('quiz') === '1') start();
