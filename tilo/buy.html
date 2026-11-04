@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Tilo · Premium</title>
+<link rel="icon" href="favicon.png">
+<style>
+  :root { --bg: #FAF6EF; --card: #fff; --ink: #20242E; --muted: #626978; --teal: #0FA38A; --line: #ECE5D7; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 480px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 28px) 18px 40px; display: grid; gap: 16px; }
+  .top { display: flex; gap: 12px; align-items: center; } .top img { width: 52px; border-radius: 12px; } h1 { margin: 0; font-size: 1.5rem; }
+  .plan { display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--line); background: var(--card); border-radius: 16px; padding: 14px 16px; font-weight: 800; width: 100%; text-align: left; font: inherit; font-weight: 800; color: inherit; }
+  .plan small { display: block; color: var(--muted); font-weight: 600; } .plan.sel { border-color: var(--teal); background: #E4F5F1; }
+  .go { border: 0; border-radius: 16px; min-height: 56px; font: inherit; font-weight: 900; font-size: 1.05rem; background: var(--teal); color: #fff; }
+  .muted { color: var(--muted); font-size: .9rem; margin: 0; } .err { color: #B3261E; font-weight: 700; }
+  .test { background: #FFF1C9; color: #8A6100; border-radius: 12px; padding: 8px 12px; font-weight: 800; font-size: .85rem; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><img src="icon.png" alt=""><div><h1>Tilo Premium</h1><p class="muted">All 8 branches, every quest and game</p></div></div>
+  <div class="test" id="test" hidden>Test mode: use a Paddle test card, no real money is charged.</div>
+  <button class="plan" type="button" data-p="year"><span>Yearly · $29 first year<small>then $59/year · 7 days free</small></span><span>◉</span></button>
+  <button class="plan" type="button" data-p="month"><span>Monthly · $7.99<small>7 days free</small></span><span>○</span></button>
+  <button class="plan" type="button" data-p="family"><span>Family · $99/year<small>up to 4 kids · 7 days free</small></span><span>○</span></button>
+  <button class="go" id="go" type="button">Start 7 days free</button>
+  <p class="err" id="err" hidden></p>
+  <p class="muted">Secure checkout by Paddle, our reseller. Cancel any time from your receipt email. We remind you before the trial ends. <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="refunds.html">Refunds</a></p>
+</main>
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const q = new URLSearchParams(location.search), C = (window.TILO || {}).paddle || {};
+  const test = q.get('test') === '1', install = (q.get('i') || '').replace(/[^a-z0-9]/gi, '').slice(0, 64);
+  const PD = test ? Object.assign({ env: 'sandbox' }, C.sandbox) : Object.assign({ env: 'production' }, C.live);
+  let plan = ['year', 'month', 'family'].includes(q.get('plan')) ? q.get('plan') : 'year';
+  const err = (m) => { const e = document.getElementById('err'); e.textContent = m; e.hidden = false; };
+  document.getElementById('test').hidden = !test;
+  const mark = () => document.querySelectorAll('.plan').forEach((b) => { const on = b.dataset.p === plan; b.classList.toggle('sel', on); b.lastElementChild.textContent = on ? '◉' : '○'; });
+  document.querySelectorAll('.plan').forEach((b) => b.addEventListener('click', () => { plan = b.dataset.p; mark(); }));
+  mark();
+  if (install.length < 16) err('Please open this page from the Tilo app.');
+  const s = document.createElement('script'); s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+  s.onload = () => { if (PD.env === 'sandbox') Paddle.Environment.set('sandbox'); Paddle.Initialize({ token: PD.token }); };
+  s.onerror = () => err('Could not load the checkout. Check your connection and try again.');
+  document.head.appendChild(s);
+  document.getElementById('go').addEventListener('click', () => {
+    if (install.length < 16) return err('Please open this page from the Tilo app.');
+    if (!window.Paddle) return err('The checkout is still loading. Try again in a moment.');
+    Paddle.Checkout.open({ items: [{ priceId: PD.prices[plan], quantity: 1 }], discountCode: plan === 'year' ? C.foundingCode : undefined,
+      customData: { install, src: 'app' }, settings: { displayMode: 'overlay', theme: 'light', locale: 'en', successUrl: 'https://quietowl.app/tilo/welcome.html?app=1' } });
+  });
+})();
+</script>
+</body>
+</html>

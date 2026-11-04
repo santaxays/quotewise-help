@@ -14,6 +14,7 @@
   header img { width: 56px; height: 56px; border-radius: 13px; }
   h1 { font-size: 1.9rem; margin: 0; letter-spacing: -.02em; }
   h2 { margin-top: 1.5em; font-size: 1.25rem; }
+  [hidden] { display: none !important; }
   section { background: var(--card); border-radius: 16px; padding: 4px 22px 18px; margin-top: 18px; }
   a { color: var(--accent); }
   header p, p.muted { color: var(--muted); margin: 0; }
@@ -23,12 +24,19 @@
 <main>
 <header><img src="icon.png" alt=""><div><h1>Welcome to Tilo</h1><p><a href="./">Tilo</a> · by <a href="/">Quiet Owl Studio</a> · Last updated November 3, 2026</p></div></header>
 
-<section>
+<section id="web">
 <h2>🎉 Thank you, you are in!</h2>
 <p>Your Premium subscription is active. Check your email for the receipt from Paddle, our reseller.</p>
-<p>Next step: install Tilo on your iPhone and sign in with the same email to unlock all 8 branches.</p>
+<p>Next step: install Tilo on your iPhone to unlock all 8 branches.</p>
 <p class="muted">Need help? We answer every email.</p>
-</section><p class="muted" style="margin-top:24px">Questions? Write to <a href="mailto:support@quietowl.app">support@quietowl.app</a>. See also: <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="refunds.html">Refunds</a></p>
+</section>
+<section id="app" hidden>
+<h2>🎉 You are all set!</h2>
+<p>Premium is on. Go back to the Tilo app: all 8 branches unlock automatically within a few seconds.</p>
+<p><a href="quietowltilo://premium" style="display:inline-block;background:#0FA38A;color:#fff;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:14px">Open Tilo</a></p>
+<p class="muted">Your receipt from Paddle, our reseller, is in your email. You can manage or cancel the subscription from the link in that email.</p>
+</section>
+<script>if (new URLSearchParams(location.search).get('app') === '1') { document.getElementById('web').hidden = true; document.getElementById('app').hidden = false; }</script><p class="muted" style="margin-top:24px">Questions? Write to <a href="mailto:support@quietowl.app">support@quietowl.app</a>. See also: <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="refunds.html">Refunds</a></p>
 </main>
 </body>
 </html>
